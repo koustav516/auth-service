@@ -4,9 +4,13 @@
   "description": "The usermanagement service",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/server.js",
+    "dev": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Koustav Majumder",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
 }
