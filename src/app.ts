@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 
 //Global error handler
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
     logger.error(err.message);
     const statusCode = err.statusCode || 500;
