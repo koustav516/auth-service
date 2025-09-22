@@ -15,7 +15,7 @@ router.post(
     '/register',
     registerValidator,
     (req: Request, res: Response, next: NextFunction) =>
-        authController.register(req, res, next),
+        void authController.register(req, res, next),
 );
 
 export default router;

@@ -5,8 +5,6 @@ import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/constants';
 
-// jest.setTimeout(30000);
-
 describe('POST /auth/register', () => {
     let connection: DataSource;
 
@@ -162,15 +160,32 @@ describe('POST /auth/register', () => {
                 email: '',
                 password: 'secret',
             };
-
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);
 
+            expect(response.statusCode).toBe(400);
             const userRepository = connection.getRepository(User);
             const users = await userRepository.find();
-            expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(0);
+        });
+    });
+
+    describe('Fields are not in proper format', () => {
+        it('should trim the email field', async () => {
+            const userData = {
+                firstName: 'Koustav',
+                lastName: 'Majumder',
+                email: 'code@123 ',
+                password: 'secret',
+            };
+
+            await request(app).post('/auth/register').send(userData);
+
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            const user = users[0];
+            expect(user.email).toBe('code@123');
         });
     });
 });
