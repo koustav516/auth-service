@@ -3,7 +3,7 @@ import app from '../../src/app';
 import { DataSource } from 'typeorm';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
-import { truncateTables } from '../utils';
+import { Roles } from '../../src/constants';
 
 // jest.setTimeout(30000);
 
@@ -15,7 +15,8 @@ describe('POST /auth/register', () => {
     });
 
     beforeEach(async () => {
-        await truncateTables(connection);
+        await connection.dropDatabase();
+        await connection.synchronize();
     });
 
     afterAll(async () => {
@@ -94,6 +95,23 @@ describe('POST /auth/register', () => {
             expect((response.body as Record<string, string>).id).toBe(
                 users[0].id,
             );
+        });
+        it('should assign a customer role', async () => {
+            const userData = {
+                firstName: 'Koustav',
+                lastName: 'Majumder',
+                email: 'code@123',
+                password: 'secret',
+            };
+
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            expect(users[0]).toHaveProperty('role');
+            expect(users[0].role).toBe(Roles.CUSTOMER);
         });
     });
 
