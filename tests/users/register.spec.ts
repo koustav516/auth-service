@@ -130,7 +130,7 @@ describe('POST /auth/register', () => {
             const users = await userRepository.find();
             expect(users[0].password).not.toBe(userData.password);
             expect(users[0].password).toHaveLength(60);
-            expect(users[0].password).toMatch(/^\$2b\$\d+\$/); //It matches n hashed password starts with '$2b$somenumber$' eg: '$2b$10$'
+            expect(users[0].password).toMatch(/^\$2b\$\d+\$/); //It matches hashed password starts with '$2b$somenumber$' eg: '$2b$10$'
         });
 
         it('should return 400 status code if email id already exists', async () => {
@@ -154,5 +154,23 @@ describe('POST /auth/register', () => {
         });
     });
 
-    describe('Missing fields', () => {});
+    describe('Missing fields', () => {
+        it('should return 400 status code if email field is missing', async () => {
+            const userData = {
+                firstName: 'Koustav',
+                lastName: 'Majumder',
+                email: '',
+                password: 'secret',
+            };
+
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            expect(response.statusCode).toBe(400);
+            expect(users).toHaveLength(0);
+        });
+    });
 });
