@@ -27,7 +27,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
             //Act
@@ -60,7 +60,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
             //Act
@@ -79,7 +79,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
 
@@ -98,7 +98,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
 
@@ -116,7 +116,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
 
@@ -135,7 +135,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
 
@@ -174,7 +174,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: '',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
             const response = await request(app)
@@ -191,7 +191,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: '',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret@123',
             };
             const response = await request(app)
@@ -208,7 +208,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: '',
             };
             const response = await request(app)
@@ -227,7 +227,7 @@ describe('POST /auth/register', () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123 ',
+                email: 'code@123.com ',
                 password: 'secret@123',
             };
 
@@ -236,13 +236,13 @@ describe('POST /auth/register', () => {
             const userRepository = connection.getRepository(User);
             const users = await userRepository.find();
             const user = users[0];
-            expect(user.email).toBe('code@123');
+            expect(user.email).toBe('code@123.com');
         });
         it('should return 400 status code if password length is less than 8 characters', async () => {
             const userData = {
                 firstName: 'Koustav',
                 lastName: 'Majumder',
-                email: 'code@123',
+                email: 'code@123.com',
                 password: 'secret',
             };
             const response = await request(app)
@@ -253,6 +253,42 @@ describe('POST /auth/register', () => {
             const userRepository = connection.getRepository(User);
             const users = await userRepository.find();
             expect(users).toHaveLength(0);
+        });
+
+        it('should return 400 if the email is not valid', async () => {
+            const userData = {
+                firstName: 'Koustav',
+                lastName: 'Majumder',
+                email: 'code',
+                password: 'secret@123',
+            };
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            expect(response.statusCode).toBe(400);
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            expect(users).toHaveLength(0);
+        });
+        it('shoud return an array of error messages if email is missing', async () => {
+            // Arrange
+            const userData = {
+                firstName: 'Koustav',
+                lastName: 'Majumder',
+                email: '',
+                password: 'password',
+            };
+            // Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            // Assert
+            expect(response.body).toHaveProperty('errors');
+            expect(
+                (response.body as Record<string, string>).errors.length,
+            ).toBeGreaterThan(0);
         });
     });
 });

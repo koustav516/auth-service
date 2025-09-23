@@ -18,7 +18,7 @@ export class AuthController {
     ) {
         const result = validationResult(req);
         if (!result.isEmpty()) {
-            return res.status(400).json({ error: result.array() });
+            return res.status(400).json({ errors: result.array() });
         }
 
         const { firstName, lastName, email, password } = req.body;
