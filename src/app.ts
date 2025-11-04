@@ -4,6 +4,7 @@ import { HttpError } from 'http-errors';
 import cookieParser from 'cookie-parser';
 import logger from './config/logger';
 import authRouter from './routes/auth';
+import tenantRouter from './routes/tenant';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRouter);
+app.use('/tenants', tenantRouter);
 
 //Global error handler
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
