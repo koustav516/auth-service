@@ -33,4 +33,14 @@ router.get('/:id', authenticate, canAccess([Roles.ADMIN]), (req, res, next) => {
     void tenantController.getTenantById(req, res, next);
 });
 
+router.patch(
+    '/:id',
+    authenticate,
+    canAccess([Roles.ADMIN]),
+    tenantValidator,
+    (req: CreateTenantRequest, res: Response, next: NextFunction) => {
+        void tenantController.update(req, res, next);
+    },
+);
+
 export default router;

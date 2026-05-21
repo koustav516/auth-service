@@ -61,4 +61,38 @@ export class TenantController {
             next(error);
         }
     }
+
+    async update(req: CreateTenantRequest, res: Response, next: NextFunction) {
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            return res.status(400).json({ errors: result.array() });
+        }
+        const { name, address } = req.body;
+        const tenantId = Number(req.params.id);
+        if (isNaN(tenantId)) {
+            next(createHttpError(400, 'Invalid url param.'));
+            return;
+        }
+
+        const tenant = await this.tenantService.getTenantById(tenantId);
+        if (!tenant) {
+            next(createHttpError(404, 'Tenant not found!'));
+            return;
+        }
+
+        this.logger.debug(
+            `Request for update tenant with id: ${tenantId} received`,
+        );
+
+        try {
+            await this.tenantService.update(tenantId, {
+                name,
+                address,
+            });
+            this.logger.info('Tenant has been updated', { id: tenantId });
+            res.json({ id: tenantId });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
