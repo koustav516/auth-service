@@ -1,4 +1,4 @@
-import express, { NextFunction, RequestHandler, Response } from 'express';
+import express, { NextFunction, Response } from 'express';
 import { TenantController } from '../controllers/TenantController';
 import { TenantService } from '../services/TenantService';
 import { AppDataSource } from '../config/data-source';
@@ -40,6 +40,15 @@ router.patch(
     tenantValidator,
     (req: CreateTenantRequest, res: Response, next: NextFunction) => {
         void tenantController.update(req, res, next);
+    },
+);
+
+router.delete(
+    '/:id',
+    authenticate,
+    canAccess([Roles.ADMIN]),
+    (req, res, next) => {
+        void tenantController.destroy(req, res, next);
     },
 );
 

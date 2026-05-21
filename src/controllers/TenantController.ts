@@ -95,4 +95,26 @@ export class TenantController {
             next(error);
         }
     }
+
+    async destroy(req: Request, res: Response, next: NextFunction) {
+        const tenantId = Number(req.params.id);
+
+        if (isNaN(tenantId)) {
+            next(createHttpError(400, 'Invalid url param.'));
+            return;
+        }
+
+        try {
+            const tenant = await this.tenantService.getTenantById(tenantId);
+            if (!tenant) {
+                next(createHttpError(404, 'Tenant not found!'));
+                return;
+            }
+            await this.tenantService.destroy(tenantId);
+            this.logger.info(`Tenant with id ${tenantId} has been deleted`);
+            res.json({ id: tenantId });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
